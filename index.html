@@ -8,6 +8,7 @@
       html, body {
         font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
         height: 99vh;
+        background: black;
         font-weight: 700;
         font-size: 2.0rem;
         text-shadow: 3px 3px 5px #333;
@@ -32,20 +33,48 @@
       }
 
       .heightspan {
+        display: flex;
         flex: 12;
+        width: 99vw;
+      }
+
+      .right {
+        width: 99vw;
+        text-align: right;
+      }
+
+      .middle {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      #counter {
+        margin-left: 0.5em;
       }
     </style>
+    <link rel="stylesheet" href="flipclock.css">
   </head>
   <body>
     <div class="rightcol">
-      <div>Followers goal: <span id="followers"></span><span>/10</span></div>
-      <div>   Viewer goal: <span id="viewers"></span><span>/10</span></div>
-      <div class="heightspan"></div>
-      <div>FPS: <span id="fps"></span></div>
+      <div>Viewers: <span id="viewers"></span><span>/10</span></div>
+      <div class="heightspan">
+        <div class="middle">
+          Broadcast will start in <div class="counter"></div>
+        </div>
+      </div>
       <div>Time: <span id="time"></span></div>
     </div>
-
+    <script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+		<script src="flipclock.min.js"></script>
     <script>
+      var now = new Date();
+      var startTime = new Date("Aug 3 2017 21:00:00 GMT+0200");
+      var clock = $('.counter').FlipClock((startTime - now) / 1000, {
+        'countdown': true
+      });
+
       setInterval(function() {
         var date = new Date()
         document.getElementById('time').innerHTML =
@@ -57,19 +86,13 @@
           if(contentType && contentType.indexOf("application/json") !== -1) {
             return response.json().then(function(json) {
               if(json.stream) {
-                document.getElementById('followers').innerHTML = json.stream.channel.followers;
                 document.getElementById('viewers').innerHTML = json.stream.viewers;
-                document.getElementById('fps').innerHTML = Math.round(json.stream.average_fps);
               } else {
-                document.getElementById('followers').innerHTML = -2;
                 document.getElementById('viewers').innerHTML = -2;
-                document.getElementById('fps').innerHTML = -2;
               }
             });
           } else {
-            document.getElementById('followers').innerHTML = -1;
             document.getElementById('viewers').innerHTML = -1;
-            document.getElementById('fps').innerHTML = -1;
           }
         });
       }, 5000);
